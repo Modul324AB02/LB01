@@ -53,7 +53,7 @@
     // Only send if the typed in key is not a modifier key
     if (event.key.length === 1) {
       socket.send(JSON.stringify({ type: 'typing', user: myUser }));
-      const textingMessage = `<p class= "text-sm font-bold text-white m-1">Mendel Schreib eine Nachricht </p>`
+      const textingMessage = `<p class= "text-sm font-bold text-white m-1">${myUser.name} Schreibt gerade</p>`
       textingBox.innerHTML = textingMessage
     }
     // Only send if the typed in key is the enter key
