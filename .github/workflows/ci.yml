@@ -3,7 +3,8 @@ name: CI Pipeline
 on:
   pull_request:
     branches:
-      - master
+      - main
+      - development
     types:
       - opened
 jobs:
