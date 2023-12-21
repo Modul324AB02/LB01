@@ -67,6 +67,7 @@
   });
 
   document.addEventListener('keydown', (event) => {
+    const textingBox = document.getElementById('userIsTexting')
     // Only send if the typed in key is not a modifier key
     if (event.key.length === 1) {
       socket.send(JSON.stringify({ type: 'typing', user: myUser }));
@@ -82,12 +83,15 @@
       // Only send if the typed in key is not a modifier key
       if (event.key.length === 1) {
         socket.send(JSON.stringify({ type: 'typing', user: myUser }));
+        const textingMessage = `<p class= "text-sm font-bold text-white m-1">${myUser.name} Schreibt gerade</p>`
+        textingBox.innerHTML = textingMessage
       }
       // Only send if the typed in key is the enter key
       if (event.key === 'Enter') {
         const message = document.getElementById('messageInput').value;
         socket.send(JSON.stringify({ type: 'message', message, user: myUser }));
         document.getElementById('messageInput').value = '';
+        textingBox.innerHTML = ''
       }
     });
   });
