@@ -36,8 +36,18 @@
     console.error('WebSocket error:', event);
   });
 
-  // Wait until the DOM is loaded before adding event listeners
-  document.addEventListener('DOMContentLoaded', (event) => {
+ // Wait until the DOM is loaded before adding event listeners
+ document.addEventListener('DOMContentLoaded', () => {
+  // Event Listener für den Dark Mode Schalter
+  const modeToggle = document.getElementById('modeToggle');
+  modeToggle.addEventListener('change', () => {
+    if (modeToggle.checked) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  });
+  
     // Send a message when the send button is clicked
     document.getElementById('sendButton').addEventListener('click', () => {
       const message = document.getElementById('messageInput').value;
