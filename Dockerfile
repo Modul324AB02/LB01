@@ -1,17 +1,21 @@
-# Use the official Node.js image as the base image
-FROM node:18
+# Verwende das offizielle Node.js-Image als Basisimage
+FROM node:latest
 
-# Set the working directory inside the container
-WORKDIR ...
+# Setze das Arbeitsverzeichnis innerhalb des Containers
+WORKDIR /m324-simple-typescript
 
-# Copy the package.json and package-lock.json files to the container
-COPY ...
+# Kopiere den Quellcode in den Container
+COPY . .
 
-# Install the dependencies
-RUN ...
+# Installiere die Abhängigkeiten mit Yarn
+RUN yarn install
 
-# Copy the source code to the container
-COPY ...
+# Führe das Build-Skript aus
+RUN yarn lint
 
-# Start the server when the container starts
-CMD ...
+RUN yarn test
+
+RUN yarn build
+
+# Starte den Server beim Start des Containers
+CMD ["yarn", "start"]

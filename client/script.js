@@ -21,6 +21,7 @@
         break;
       case 'activeUsers':
         activeUsers = message.users;
+        updateActiveUsersUI(activeUsers);
         break;
       case 'typing':
         typingUsers = message.users;
@@ -36,8 +37,27 @@
     console.error('WebSocket error:', event);
   });
 
+  const updateActiveUsersUI = (users) => {
+    const usersList = document.getElementById('active-users');
+    users.forEach(user => {
+      const userElement = document.createElement('li');
+      userElement.textContent = user.name;
+      usersList.appendChild(userElement);
+    });
+  };
+
   // Wait until the DOM is loaded before adding event listeners
-  document.addEventListener('DOMContentLoaded', (event) => {
+  document.addEventListener('DOMContentLoaded', () => {
+  // Event Listener für den Dark Mode Schalter
+  const modeToggle = document.getElementById('modeToggle');
+  modeToggle.addEventListener('change', () => {
+    if (modeToggle.checked) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  });
+  
     // Send a message when the send button is clicked
     document.getElementById('sendButton').addEventListener('click', () => {
       const message = document.getElementById('messageInput').value;
@@ -47,6 +67,7 @@
   });
 
   document.addEventListener('keydown', (event) => {
+    const textingBox = document.getElementById('userIsTexting')
     // Only send if the typed in key is not a modifier key
     if (event.key.length === 1) {
       socket.send(JSON.stringify({ type: 'typing', user: myUser }));
@@ -57,5 +78,21 @@
       socket.send(JSON.stringify({ type: 'message', message, user: myUser }));
       document.getElementById('messageInput').value = '';
     }
+
+    document.addEventListener('keydown', (event) => {
+      // Only send if the typed in key is not a modifier key
+      if (event.key.length === 1) {
+        socket.send(JSON.stringify({ type: 'typing', user: myUser }));
+        const textingMessage = `<p class= "text-sm font-bold text-white m-1">${myUser.name} Schreibt gerade</p>`
+        textingBox.innerHTML = textingMessage
+      }
+      // Only send if the typed in key is the enter key
+      if (event.key === 'Enter') {
+        const message = document.getElementById('messageInput').value;
+        socket.send(JSON.stringify({ type: 'message', message, user: myUser }));
+        document.getElementById('messageInput').value = '';
+        textingBox.innerHTML = ''
+      }
+    });
   });
 })();
