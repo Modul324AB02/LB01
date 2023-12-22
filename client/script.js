@@ -11,8 +11,10 @@
   socket.addEventListener('message', (event) => {
     const message = JSON.parse(event.data);
     console.log('WebSocket message:', message);
+    
     switch (message.type) {
       case 'message':
+        document.getElementById('userIsTexting').innerHTML = ''
         const messageElement = generateMessage(message, myUser);
         document.getElementById('messages').appendChild(messageElement);
         setTimeout(() => {
@@ -25,10 +27,16 @@
         break;
       case 'typing':
         typingUsers = message.users;
+        console.log(typingUsers)
+        const textingBox = document.getElementById('userIsTexting')
+        const textingMessage = `<p class= "text-sm font-bold text-white m-1">${myUser.name} Schreibt gerade</p>`
+        textingBox.innerHTML = textingMessage
         break;
       default:
         break;
     }
+
+
   });
   socket.addEventListener('close', (event) => {
     console.log('WebSocket closed.');
@@ -67,7 +75,7 @@
   });
 
   document.addEventListener('keydown', (event) => {
-    const textingBox = document.getElementById('userIsTexting')
+
     // Only send if the typed in key is not a modifier key
     if (event.key.length === 1) {
       socket.send(JSON.stringify({ type: 'typing', user: myUser }));
@@ -80,11 +88,11 @@
     }
 
     document.addEventListener('keydown', (event) => {
+      console.log(typingUsers)
       // Only send if the typed in key is not a modifier key
       if (event.key.length === 1) {
         socket.send(JSON.stringify({ type: 'typing', user: myUser }));
-        const textingMessage = `<p class= "text-sm font-bold text-white m-1">${myUser.name} Schreibt gerade</p>`
-        textingBox.innerHTML = textingMessage
+
       }
       // Only send if the typed in key is the enter key
       if (event.key === 'Enter') {
