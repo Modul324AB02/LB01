@@ -39,6 +39,7 @@
 
   const updateActiveUsersUI = (users) => {
     const usersList = document.getElementById('active-users');
+    usersList.innerHTML = '';
     users.forEach(user => {
       const userElement = document.createElement('li');
       userElement.textContent = user.name;
