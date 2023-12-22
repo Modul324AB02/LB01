@@ -12,11 +12,26 @@
   </head>
   <body>
     <div class="w-full h-screen flex justify-center">
-      <div class="max-w-2xl w-full md:w-3/4 lg:w-2/4 bg-white flex flex-col">
-        <div class="bg-blue-500 px-4 py-4 rounded-b">
+      <div class="max-w-2xl w-full md:w-3/4 lg:w-2/4 flex flex-col">
+        <div class="bg-blue-500 px-4 py-4 rounded-b flex justify-between items-center">
           <p class="text-lg font-bold text-white">LB1 Chat - M324</p>
+          <div class="flex items-center">
+            <span class="text-white mr-2">Dark Mode:</span>
+            <label class="switch">
+              <input type="checkbox" id="modeToggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
-        <div class="flex-grow flex flex-col justify-start p-4 gap-4" id="messages"></div>
+        <div class="bg-gray-100 px-4 py-2">
+          <p class="text-sm font-bold">Aktive Benutzer :</p>
+          <ul id="active-users" class="list-disc pl-5"></ul>
+        </div>
+
+        <div class="bg-white flex-grow flex flex-col justify-start p-4 gap-4" id="messages"></div>
+        <div class="bg-blue-500 w-44 mb-2 rounded-xl" id="userIsTexting">
+
+        </div>
         <div class="bg-gray-100 px-4 py-4 flex items-center rounded-t">
           <input
             id="messageInput"

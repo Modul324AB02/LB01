@@ -12,7 +12,17 @@ const typingUsers: User[] = [];
 const broadcastMessage = (message: Message) => {
   console.log('Broadcasting message', message);
   websocketServer.clients.forEach((client) => {
-    client.send(JSON.stringify(message));
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(message));
+    }
+  });
+};
+
+// Function to broadcast the list of active users
+const broadcastActiveUsers = () => {
+  broadcastMessage({
+    type: 'activeUsers',
+    users: activeUsers.map((user) => ({ id: user.id, name: user.name })),
   });
 };
 
@@ -27,6 +37,12 @@ const onConnection = (ws: WebSocket) => {
   console.log('New websocket connection');
   ws.on('message', (message) => onMessage(ws, message));
   ws.on('close', () => onClose(ws));
+  ws.send(
+    JSON.stringify({
+      type: 'activeUsers',
+      users: activeUsers.map((user) => ({ id: user.id, name: user.name })),
+    }),
+  );
 };
 
 // If a connection is closed, the onClose function is called
@@ -36,6 +52,7 @@ const onClose = (ws: WebSocket) => {
   if (userIndex !== -1) {
     console.log('User disconnected:', activeUsers[userIndex].name);
     const removedUser = activeUsers.splice(userIndex, 1);
+    broadcastActiveUsers();
     removeTypingStatus(removedUser[0].id);
     broadcastMessage({
       type: 'activeUsers',
@@ -58,7 +75,7 @@ const removeTypingStatus = (userId: string) => {
 const typingUsersDebounced: { [key: string]: DebouncedFunction } = {};
 
 // If a new message is received, the onMessage function is called
-  const onMessage = (ws: WebSocket, message: RawData) => {
+const onMessage = (ws: WebSocket, message: RawData) => {
   const messageObject = JSON.parse(message.toString()) as Message;
   console.log('Message received', messageObject);
   switch (messageObject.type) {
@@ -93,7 +110,7 @@ const typingUsersDebounced: { [key: string]: DebouncedFunction } = {};
           users: typingUsers,
         });
       }
-        typingUsersDebounced[messageObject.user.id] = debounce(() => {
+      typingUsersDebounced[messageObject.user.id] = debounce(() => {
         if (!messageObject.user?.id) return;
         removeTypingStatus(messageObject.user.id);
       }, 2000);
@@ -105,4 +122,4 @@ const typingUsersDebounced: { [key: string]: DebouncedFunction } = {};
   }
 };
 
- export { initializeWebsocketServer };
+export { initializeWebsocketServer };
